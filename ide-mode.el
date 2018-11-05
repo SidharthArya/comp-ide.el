@@ -2,6 +2,7 @@
 
 (require 'delsel)
 (require 'eshell)
+(require 'essentials)
 ;; (require 'flycheck)
 ;; (require 'company)
 ;; (defvar ide-mode-hook '(yas-minor-mode company-mode flycheck-mode))
@@ -51,36 +52,37 @@
 (setq ide/ide-mode-compile-recipes '(("c" "gcc %bf -o %bo")
                                        ("cpp" "g++ %bf -o %bo")
                                        ("java" "javac %bf")
-                                       ("el" "something %bf %bo")
                                        ("hs" "ghc %bf")
-                                       ("go" "go build %bf")                                    
+                                       ("go" "go build %bf")
+				       ("rs" "rustc %bf")
                                        ))
 (setq ide/ide-mode-execute-recipes '(("c" "./%bo")
                                        ("cpp" "./%bo")
                                        ("java" "java %bo")
-                                       ("el" "something %bf %bo")
                                        ("hs" "./%bo")
                                        ("js" "nodejs %bf")
                                        ("go" "./%bo")
                                        ("php" "php %bf")
                                        ("rb" "ruby %bf")
+				       ("rs" "./%bo")
                                        ))
-
+(setq ide/geterrors '(
+			       ("c" "clang -fsyntax-only %bf 2>&1 | grep : | sed 's/:/ /g' ")
+			       ("el" "clang -fsyntax-only %bf 2>&1")
+			       ))
 (defun ide/ide-mode-compile()
   "Something"
   (interactive)
   (setq ide/extension (nth 1 (split-string (buffer-name) "\\.")))
   (setq ide/file-name (nth 0 (split-string (buffer-name) "\\.")))
   
-  (setq ide/command (nth 1 (nth (position ide/extension  ide/ide-mode-compile-recipes
-                                          :test (lambda(a b) (member a b))) ide/ide-mode-compile-recipes)))
+  (setq ide/command (find-from-dict ide/ide-mode-compile-recipes ide/extension))
    (setq ide/command (string-join (split-string (string-join (split-string ide/command "%bf") (buffer-name)) "%bo") ide/file-name))
     (compile ide/command)
   )
 (defun ide/ide-mode-execute()
   (interactive)
-  (setq ide/command (nth 1 (nth (position ide/extension  ide/ide-mode-execute-recipes
-                                          :test (lambda(a b) (member a b))) ide/ide-mode-execute-recipes)))
+  (setq ide/command (find-from-dict ide/ide-mode-execute-recipes ide/extension))
   (setq ide/command (string-join (split-string (string-join (split-string ide/command "%bf") (buffer-name)) "%bo") ide/file-name))
    
   (defvar ide/file-name (nth 0 (split-string (buffer-name) "\\.")))
@@ -154,5 +156,15 @@
       (yank)
       )
   )
+(defun ide/syntax-check()
+  "After Save Check"
+  (interactive)
+  (let (( output (shell-command-to-string (insert-into-string (find-from-dict ide/geterrors (file-name-extension (buffer-name))) "%bf" (buffer-name))))
+	(line (split-string (shell-command-to-string (concat "echo -e \"" output "\" | awk '{print $2}'")) "\n")) 
+	(char (shell-command-to-string (concat "echo -e \"" output "\" | awk '{print $3}'"))))
+    (mapcar 'set-fringemark-at-point line))
+    )
 (add-to-list 'eshell-virtual-targets  '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*") (mark-whole-buffer) (delete-active-region)) (kill-new " ") 'ide/send-to-output) t))
 (provide 'ide-mode)
+
+

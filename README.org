@@ -17,4 +17,18 @@ All the Input is internally linked to be passed into the executing program. And 
 #+END_SRC
 * TO DO
 - [ ] Customizable Execute and Compile Recipes
+- [ ] Errors
+* Support 
+- [ ] C
+- [ ] C++
+- [ ] Ruby
+- [ ] Java
+- [ ] Python
+- [ ] Clojure
+- [ ] Rust
+- [ ] Php
+- [ ] Haskell
+- [ ] Perl
+- [ ] Javascript
+
 * COMMENT Markdown Export
