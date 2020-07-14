@@ -160,7 +160,7 @@
 (define-minor-mode ide-mode
   ""
   :lighter " ID"
-  :map (make-sparse-keymap)
+  :keymap (make-sparse-keymap)
   (if ide-mode
       (ide/ide-mode-open)
     (ide/ide-mode-close))
