@@ -1,0 +1,25 @@
+;;; ide-mode-recipes.el ---
+;;; Code:
+(setq ide/ide-mode-compile-recipes '(("c" "gcc %bf -o %bo")
+                                     ("cpp" "g++ %bf -o %bo")
+                                     ("java" "javac %bf")
+                                     ("hs" "ghc %bf")
+                                     ("go" "go build %bf")
+                                     ("rs" "rustc %bf")
+                                     ))
+(setq ide/ide-mode-execute-recipes '(("c" "./%bo")
+                                     ("cpp" "./%bo")
+                                     ("java" "java %bo")
+                                     ("hs" "./%bo")
+                                     ("js" "nodejs %bf")
+                                     ("go" "./%bo")
+                                     ("php" "php %bf")
+                                     ("rb" "ruby %bf")
+                                     ("rs" "./%bo")
+                                     ))
+(setq ide/geterrors '(
+                      ("c" "clang -fsyntax-only %bf 2>&1 | grep : | sed 's/:/ /g' ")
+                      ("el" "clang -fsyntax-only %bf 2>&1")
+                      ))
+(provide 'ide-mode-recipes)
+;;; ide-mode-recipes.el ends here
