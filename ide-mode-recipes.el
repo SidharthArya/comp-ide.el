@@ -9,6 +9,7 @@
                                      ))
 (setq ide/ide-mode-execute-recipes '(("c" "./%bo")
                                      ("cpp" "./%bo")
+                                     ("py" "python ./%bf")
                                      ("java" "java %bo")
                                      ("hs" "./%bo")
                                      ("js" "nodejs %bf")

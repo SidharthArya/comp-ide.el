@@ -24,7 +24,7 @@
 (defvar ide-right-perc 30)
 (defvar ide-shell-perc 20)
 (defvar ide-input-perc 50)
-
+(setq ide-mode-command-map (make-sparse-keymap))
 (defun ide/ide-mode-open()
   "Something"
   (interactive)
@@ -41,17 +41,20 @@
   (split-window-below (/ (* (- 100 ide-shell-perc) (window-height)) 100))
   (other-window 1)
   (eshell)
+  (ide-slave-mode t)
   (set-window-dedicated-p (get-buffer-window) t)
   (setq ide-shell-buffer (get-buffer-window))
   (other-window 1)
   (split-window-right (/ (* (- 100 ide-right-perc) (window-width)) 100))
   (other-window 1)
   (switch-to-buffer "*Output*")
+  (ide-slave-mode t)
   (set-window-dedicated-p (get-buffer-window) t)
   (setq ide-output-buffer (get-buffer-window))
   (split-window-vertically (/ (* (- 100 ide-input-perc) (window-height)) 100))
   (other-window 1)
   (switch-to-buffer "*Input*")
+  (ide-slave-mode t)
   (set-window-dedicated-p (get-buffer-window) t)
   (setq ide-input-buffer (get-buffer-window))
   (other-window 2)
@@ -97,7 +100,7 @@
   (interactive)
   (kill-buffer "*eshell*")
   (kill-buffer "*Output*")
-  (kill-buffer "*Input*")
+  ;(kill-buffer "*Input*")
   (makunbound 'ide-code-buffer)
   (makunbound 'ide-shell-buffer)
   (makunbound 'ide-output-buffer)
@@ -163,8 +166,11 @@
   :keymap (make-sparse-keymap)
   (if ide-mode
       (ide/ide-mode-open)
-    (ide/ide-mode-close))
-  )
+    (ide/ide-mode-close)))
 
+(define-minor-mode ide-slave-mode
+  ""
+  :lighter " ID"
+  :keymap (make-sparse-keymap))
 (provide 'ide-mode)
 ;;; ide-mode.el ends here
