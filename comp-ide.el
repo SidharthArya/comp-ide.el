@@ -46,9 +46,16 @@
 
 (defcustom comp-ide-hook '()
   "Comp IDE start hooks.")
-(defcustom comp-ide-right-perc 30)
-(defcustom comp-ide-shell-perc 20)
-(defcustom comp-ide-input-perc 50)
+
+(defcustom comp-ide-right-perc 30
+  "Horizontal Split Percentage. A value of 30 implies horizontal coding space would be 70%.")
+
+(defcustom comp-ide-shell-perc 20
+  "Vertical Split Percentage. A value of 20 implies vertical coding space would be 80%")
+
+(defcustom comp-ide-input-perc 50
+  "How much space should the *Input* buffer take in comparison to the *Output* buffer")
+
 (defcustom comp-ide-command-map (make-sparse-keymap)
   "Comp IDE keymap.")
 
@@ -190,11 +197,17 @@ Replace the output bufferstring with STRING"
 (defun comp-ide/syntax-check()
   "Syntax Check."
   (interactive)
-  (let (( output (shell-command-to-string (comp-ide-insert-into-string (comp-ide-find-from-dict comp-ide/geterrors (file-name-extension (buffer-name))) "%bf" (buffer-name))))
-	(line (split-string (shell-command-to-string (concat "echo -e \"" output "\" | awk '{print $2}'")) "\n"))
-	(char (shell-command-to-string (concat "echo -e \"" output "\" | awk '{print $3}'"))))
-    (mapcar 'set-fringemark-at-point line))
-  )
+  (let
+      ((output (shell-command-to-string
+                (comp-ide-insert-into-string
+                 (comp-ide-find-from-dict comp-ide/geterrors (file-name-extension
+                                                              (buffer-name))) "%bf" (buffer-name))))
+       (line (split-string (shell-command-to-string
+                            (concat "echo -e \"" output "\" | awk '{print $2}'")) "\n"))
+       (char (shell-command-to-string
+              (concat "echo -e \"" output "\" | awk '{print $3}'"))))
+    (mapcar 'set-fringemark-at-point line)))
+
 (add-to-list 'eshell-virtual-targets  '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*") (mark-whole-buffer) (delete-active-region)) (kill-new " ") 'comp-ide/send-to-output) t))
 
 (define-minor-mode comp-ide
@@ -207,7 +220,7 @@ Replace the output bufferstring with STRING"
 
 (define-minor-mode comp-ide-slave-mode
   "slave mode for comp-ide."
-  lighter " ID"
+  :lighter " ID"
   :keymap (make-sparse-keymap))
 
 (provide 'comp-ide)
