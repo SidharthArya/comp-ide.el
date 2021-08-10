@@ -1,4 +1,38 @@
-;;; ide-mode.el - A very basic implementation of ide on emacs.
+;;; comp-ide.el - A very basic implementation of a competitive ide on emacs.
+
+;; Copyright (C) 2020-2021 Sidharth Arya
+
+;; Author: Sidharth Arya <sidhartharya10@gmail.com>
+;; Maintainer: Sidharth Arya <sidhartharya10@gmail.com>
+;; Created: 28 May 2020
+;; Version: 0.1
+;; Package-Requires: ((emacs "25.1"))
+;; Keywords: tools
+;; URL: https://github.com/SidharthArya/comp-ide.el
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation; either version 2 of the License, or (at
+;; your option) any later version.
+;;
+;; This program is distributed in the hope that it will be useful, but
+;; WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+;; General Public License for more details.
+;;
+;; You should have received a copy of the GNU General Public License
+;; along with this program; if not, write to the Free Software
+;; Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307
+;; USA.
+
+;;; Commentary:
+
+;; comp-ide.el attempts to be a simple and efficient competitive coding IDE.
+;; The *Input* buffer is mapped to the stdin of program and *Output* buffer to stdout.
+;; 
+
+;;; Code:
+
 
 (require 'delsel)
 (require 'eshell)
@@ -17,18 +51,18 @@
   )
 ;; (require 'flycheck)
 ;; (require 'company)
-;; (defvar ide-mode-hook '(yas-minor-mode company-mode flycheck-mode))
-(defvar ide-mode-hook '())
-(defun ide/ide-mode-init()
+;; (defvar comp-ide-hook '(yas-minor-mode company-mode flycheck-mode))
+(defvar comp-ide-hook '())
+(defun ide/comp-ide-init()
   )
 (defvar ide-right-perc 30)
 (defvar ide-shell-perc 20)
 (defvar ide-input-perc 50)
-(setq ide-mode-command-map (make-sparse-keymap))
-(defun ide/ide-mode-open()
+(setq comp-ide-command-map (make-sparse-keymap))
+(defun ide/comp-ide-open()
   "Something"
   (interactive)
-  (defvar ide-mode nil)
+  (defvar comp-ide nil)
   (defvar ide/extension nil)
   (defvar ide/file-name nil)
   (defvar ide/command nil)
@@ -58,25 +92,25 @@
   (set-window-dedicated-p (get-buffer-window) t)
   (setq ide-input-buffer (get-buffer-window))
   (other-window 2)
-  (setq ide-mode t)
-  (run-hooks 'ide-mode-hook)
+  (setq comp-ide t)
+  (run-hooks 'comp-ide-hook)
   (setq split-window-preferred-function nil)
   )
 
 
-(defun ide/ide-mode-compile()
+(defun ide/comp-ide-compile()
   "Something"
   (interactive)
   (setq ide/extension (nth 1 (split-string (buffer-name) "\\.")))
   (setq ide/file-name (nth 0 (split-string (buffer-name) "\\.")))
   
-  (setq ide/command (find-from-dict ide/ide-mode-compile-recipes ide/extension))
+  (setq ide/command (find-from-dict ide/comp-ide-compile-recipes ide/extension))
   (setq ide/command (string-join (split-string (string-join (split-string ide/command "%bf") (buffer-name)) "%bo") ide/file-name))
   (compile ide/command)
   )
-(defun ide/ide-mode-execute()
+(defun ide/comp-ide-execute()
   (interactive)
-  (setq ide/command (find-from-dict ide/ide-mode-execute-recipes ide/extension))
+  (setq ide/command (find-from-dict ide/comp-ide-execute-recipes ide/extension))
   (setq ide/command (string-join (split-string (string-join (split-string ide/command "%bf") (buffer-name)) "%bo") ide/file-name))
   
   (defvar ide/file-name (nth 0 (split-string (buffer-name) "\\.")))
@@ -95,7 +129,7 @@
     )
   )  
 
-(defun ide/ide-mode-close() 
+(defun ide/comp-ide-close() 
   "Something"
   (interactive)
   (kill-buffer "*eshell*")
@@ -115,8 +149,8 @@
   (defvar ide-input-buffer nil)
   (defvar ide-shell-buffer nil)
 
-  (setq ide-mode nil)
-  (run-hooks 'ide-mode-hooks)
+  (setq comp-ide nil)
+  (run-hooks 'comp-ide-hooks)
   (setq split-window-preferred-function 'split-window-sensibly)
   )
 (defun ide/goto-shell()
@@ -160,17 +194,17 @@
   )
 (add-to-list 'eshell-virtual-targets  '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*") (mark-whole-buffer) (delete-active-region)) (kill-new " ") 'ide/send-to-output) t))
 
-(define-minor-mode ide-mode
+(define-minor-mode comp-ide
   ""
   :lighter " ID"
   :keymap (make-sparse-keymap)
-  (if ide-mode
-      (ide/ide-mode-open)
-    (ide/ide-mode-close)))
+  (if comp-ide
+      (ide/comp-ide-open)
+    (ide/comp-ide-close)))
 
 (define-minor-mode ide-slave-mode
   ""
   :lighter " ID"
   :keymap (make-sparse-keymap))
-(provide 'ide-mode)
-;;; ide-mode.el ends here
+(provide 'comp-ide)
+;;; comp-ide.el ends here
