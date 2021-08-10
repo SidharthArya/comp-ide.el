@@ -47,6 +47,9 @@
 (defcustom comp-ide-hook '()
   "Comp IDE start hooks.")
 
+(defcustom comp-ide-auto-execute-on-compile nil
+  "Auto Execute on compile")
+
 (defcustom comp-ide-right-perc 30
   "Horizontal Split Percentage. A value of 30 implies horizontal coding space would be 70%.")
 
@@ -76,16 +79,21 @@ REPL - Replacing string"
 (defun comp-ide/comp-ide-open()
   "Start the comp ide mode."
   (interactive)
+  (when comp-ide-auto-execute-on-compile
+    (setq compilation-finish-functions #'comp-ide/quick-execute)
+    (add-to-list 'after-save-hook #'comp-ide/comp-ide-compile))
   (defvar comp-ide nil)
   (defvar comp-ide/extension nil)
   (defvar comp-ide/file-name nil)
   (defvar comp-ide/command nil)
   (defvar comp-ide/temp nil)
+  (defvar ide-code-window nil)
   (defvar ide-code-buffer nil)
   (defvar ide-output-buffer nil)
   (defvar ide-input-buffer nil)
   (defvar ide-shell-buffer nil)
-  (setq ide-code-buffer (get-buffer-window))
+  (setq ide-code-window (get-buffer-window))
+  (setq ide-code-buffer (current-buffer))
   (split-window-below (/ (* (- 100 comp-ide-shell-perc) (window-height)) 100))
   (other-window 1)
   (eshell)
@@ -140,9 +148,13 @@ REPL - Replacing string"
 (defun comp-ide/comp-ide-close()
   "Close comp ide mode."
   (interactive)
+  (when comp-ide-auto-execute-on-compile
+    (setq compilation-finish-functions nil)
+    (setq after-save-hook (delete #'comp-ide/comp-ide-compile after-save-hook)))
   (kill-buffer "*eshell*")
   (kill-buffer "*Output*")
   ;(kill-buffer "*Input*")
+  (makunbound 'ide-code-window)
   (makunbound 'ide-code-buffer)
   (makunbound 'ide-shell-buffer)
   (makunbound 'ide-output-buffer)
@@ -152,6 +164,7 @@ REPL - Replacing string"
   (defvar comp-ide/file-name nil)
   (defvar comp-ide/command nil)
   (defvar comp-ide/temp nil)
+  (defvar ide-code-window nil)
   (defvar ide-code-buffer nil)
   (defvar ide-output-buffer nil)
   (defvar ide-input-buffer nil)
@@ -180,7 +193,8 @@ REPL - Replacing string"
 (defun comp-ide/goto-code()
   "Goto Code Buffer."
   (interactive)
-  (select-window ide-code-buffer)
+  (select-window ide-code-window)
+  (switch-to-buffer ide-code-buffer)
   )
 (defun comp-ide/send-to-output(string)
   "Send output of the program to buffer.
@@ -209,6 +223,12 @@ Replace the output bufferstring with STRING"
     (mapcar 'set-fringemark-at-point line)))
 
 (add-to-list 'eshell-virtual-targets  '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*") (mark-whole-buffer) (delete-active-region)) (kill-new " ") 'comp-ide/send-to-output) t))
+
+(defun comp-ide/quick-execute(a b)
+  "Quickly Execute the current program."
+  (interactive)
+  (comp-ide/goto-code)
+  (comp-ide/comp-ide-execute))
 
 (define-minor-mode comp-ide
   "comp-ide.el attempts to be a simple and efficient competitive coding IDE."

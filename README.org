@@ -4,12 +4,14 @@
 * Synopsis
 Comp IDE is my effort to create a very basic ide which can be useful for competitive coding. 
 [[./screenshot.png][Screenshot]]
-All the Input is internally linked to be passed into the executing program. And all the output of the program is internally sent to the output buffer.
+All the Input is internally linked to be passed into the executing program. And all the output of the program is internally sent to the output buffer, resulting in a seamless coding experience, IMO.
 
 * Basic Usage
 #+BEGIN_SRC emacs-lisp
   (use-package comp-ide
     :straight (comp-ide :type git :fetcher github :repo "https://github.com/SidharthArya/comp-ide.el" :files (:defaults))
+    :custom
+    (comp-ide-auto-execute-on-compile t)
     :config
     (require 'ide-mode-recipes)
     (evil-define-key 'normal 'prog-mode-map (kbd "\\i") comp-ide-command-map) 
