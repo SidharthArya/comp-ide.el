@@ -179,7 +179,7 @@ REPL - Replacing string"
     (yank)))
 
 (defun comp-ide-comp-ide-close()
-  "Close comp comp-ide mode."
+  "Close 'comp-ide' mode."
   (interactive)
   (when comp-ide-auto-execute-on-compile
     (setq compilation-finish-functions nil)
@@ -238,7 +238,9 @@ Replace the output bufferstring with STRING"
     (yank)))
 
 (defun comp-ide-quick-execute(a b)
-  "Quickly Execute the current program."
+  "Quickly Execute the current program.
+Argument A stands for process.
+Argument B stands for event."
   (interactive)
   (message "%s: %s" a b)
   (comp-ide-goto-code)
