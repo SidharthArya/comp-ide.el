@@ -31,14 +31,16 @@
 ;;; Code:
 ;;; ide-mode-recipes.el ---
 ;;; Code:
-(setq comp-ide/comp-ide-compile-recipes '(("c" "gcc %bf -o %bo")
+
+
+(setq comp-ide-comp-ide-compile-recipes '(("c" "gcc %bf -o %bo")
                                      ("cpp" "g++ %bf -o %bo")
                                      ("java" "javac %bf")
                                      ("hs" "ghc %bf")
                                      ("go" "go build %bf")
                                      ("rs" "rustc %bf")
                                      ))
-(setq comp-ide/comp-ide-execute-recipes '(("c" "./%bo")
+(setq comp-ide-comp-ide-execute-recipes '(("c" "./%bo")
                                      ("cpp" "./%bo")
                                      ("py" "python ./%bf")
                                      ("java" "java %bo")
@@ -49,7 +51,7 @@
                                      ("rb" "ruby %bf")
                                      ("rs" "./%bo")
                                      ))
-(setq ide/geterrors '(
+(setq comp-ide-geterrors '(
                       ("c" "clang -fsyntax-only %bf 2>&1 | grep : | sed 's/:/ /g' ")
                       ("el" "clang -fsyntax-only %bf 2>&1")
                       ))
