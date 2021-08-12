@@ -1,4 +1,4 @@
-;;; comp-ide.el --- A very basic implementation of a competitive ide on emacs.
+;;; comp-ide.el --- A very basic implementation of a competitive ide on emacs. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020-2021 Sidharth Arya
 
@@ -48,16 +48,16 @@
   "Comp IDE start hooks.")
 
 (defcustom comp-ide-auto-execute-on-compile nil
-  "Auto Execute on compile")
+  "Auto Execute on compile.")
 
 (defcustom comp-ide-right-perc 30
-  "Horizontal Split Percentage. A value of 30 implies horizontal coding space would be 70%.")
+  "Horizontal Split Percentage.  A value of 30 implies horizontal coding space would be 70%.")
 
 (defcustom comp-ide-shell-perc 20
-  "Vertical Split Percentage. A value of 20 implies vertical coding space would be 80%")
+  "Vertical Split Percentage.  A value of 20 implies vertical coding space would be 80%.")
 
 (defcustom comp-ide-input-perc 50
-  "How much space should the *Input* buffer take in comparison to the *Output* buffer")
+  "How much space should the *Input* buffer take in comparison to the *Output* buffer.")
 
 (defcustom comp-ide-command-map (make-sparse-keymap)
   "Comp IDE keymap.")
@@ -70,12 +70,14 @@ ELEM - index value of element to return"
   (if (equal elem nil)
       (nth 1 (nth (cl-position option list :test (lambda (a b) (member a b))) list))
     (nth elem (nth (cl-position option list :test (lambda (a b) (member a b))) list))))
+
 (defun comp-ide-insert-into-string(string identifier repl)
   "Replace an identifier in a string.
 STRING - string to insert into
 IDENTIFIER - string to replace
 REPL - Replacing string"
   (string-join (split-string string identifier) repl))
+
 (defun comp-ide/comp-ide-open()
   "Start the comp ide mode."
   (interactive)
@@ -124,8 +126,12 @@ REPL - Replacing string"
   (setq comp-ide/extension (nth 1 (split-string (buffer-name) "\\.")))
   (setq comp-ide/file-name (nth 0 (split-string (buffer-name) "\\.")))
   
-  (setq comp-ide/command (comp-ide-find-from-dict comp-ide/comp-ide-compile-recipes comp-ide/extension))
-  (setq comp-ide/command (string-join (split-string (string-join (split-string comp-ide/command "%bf") (buffer-name)) "%bo") comp-ide/file-name))
+  (setq comp-ide/command
+        (comp-ide-find-from-dict comp-ide/comp-ide-compile-recipes comp-ide/extension))
+  (setq comp-ide/command
+        (string-join (split-string (string-join
+                                    (split-string comp-ide/command "%bf") (buffer-name)) "%bo")
+                     comp-ide/file-name))
   (compile comp-ide/command))
 
 (defun comp-ide/comp-ide-execute()
@@ -177,25 +183,24 @@ REPL - Replacing string"
 (defun comp-ide/goto-shell()
   "Goto Shell Prompt."
   (interactive)
-  (select-window ide-shell-buffer)
-  )
+  (select-window ide-shell-buffer))
 
 (defun comp-ide/goto-output()
   "Goto Output BUffer."
   (interactive)
-  (select-window ide-output-buffer)
-  )
+  (select-window ide-output-buffer))
+
 (defun comp-ide/goto-input()
   "Goto Input Buffer."
   (interactive)
-  (select-window ide-input-buffer)
-  )
+  (select-window ide-input-buffer))
+
 (defun comp-ide/goto-code()
   "Goto Code Buffer."
   (interactive)
   (select-window ide-code-window)
-  (switch-to-buffer ide-code-buffer)
-  )
+  (switch-to-buffer ide-code-buffer))
+
 (defun comp-ide/send-to-output(string)
   "Send output of the program to buffer.
 Replace the output bufferstring with STRING"
@@ -204,10 +209,10 @@ Replace the output bufferstring with STRING"
   (with-current-buffer (get-buffer "*Output*")
     (mark-whole-buffer)
     (delete-active-region)
-    (yank)
-    )
-  )
+    (yank)))
+
 ;; Syntax Check doesn't seem necessary for this package to implement
+
 (defun comp-ide/syntax-check()
   "Syntax Check."
   (interactive)
@@ -222,7 +227,10 @@ Replace the output bufferstring with STRING"
               (concat "echo -e \"" output "\" | awk '{print $3}'"))))
     (mapcar 'set-fringemark-at-point line)))
 
-(add-to-list 'eshell-virtual-targets  '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*") (mark-whole-buffer) (delete-active-region)) (kill-new " ") 'comp-ide/send-to-output) t))
+(add-to-list 'eshell-virtual-targets
+             '("/dev/ide" (lambda(mode) (with-current-buffer (get-buffer "*Output*")
+                                          (mark-whole-buffer) (delete-active-region))
+                            (kill-new " ") 'comp-ide/send-to-output) t))
 
 (defun comp-ide/quick-execute(a b)
   "Quickly Execute the current program."
