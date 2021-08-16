@@ -1,4 +1,4 @@
-;;; comp-ide-recipes.el - Default recipes for comp-ide
+;;; comp-ide-recipes.el --- Default recipes for comp-ide
 
 ;; Copyright (C) 2020-2021 Sidharth Arya
 
@@ -32,14 +32,21 @@
 ;;; ide-mode-recipes.el ---
 ;;; Code:
 
+(defcustom comp-ide-comp-ide-compile-recipes nil
+  "Compile Recipes for comp ide."
+  :type 'list)
+
+(defcustom comp-ide-comp-ide-execute-recipes nil
+  "Execute Recipes for comp ide."
+  :type 'list)
 
 (setq comp-ide-comp-ide-compile-recipes '(("c" "gcc %bf -o %bo")
                                      ("cpp" "g++ %bf -o %bo")
                                      ("java" "javac %bf")
                                      ("hs" "ghc %bf")
                                      ("go" "go build %bf")
-                                     ("rs" "rustc %bf")
-                                     ))
+                                     ("rs" "rustc %bf")))
+
 (setq comp-ide-comp-ide-execute-recipes '(("c" "./%bo")
                                      ("cpp" "./%bo")
                                      ("py" "python ./%bf")
@@ -49,11 +56,7 @@
                                      ("go" "./%bo")
                                      ("php" "php %bf")
                                      ("rb" "ruby %bf")
-                                     ("rs" "./%bo")
-                                     ))
-(setq comp-ide-geterrors '(
-                      ("c" "clang -fsyntax-only %bf 2>&1 | grep : | sed 's/:/ /g' ")
-                      ("el" "clang -fsyntax-only %bf 2>&1")
-                      ))
+                                     ("rs" "./%bo")))
+
 (provide 'comp-ide-recipes)
 ;;; comp-ide-recipes.el ends here
