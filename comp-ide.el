@@ -1,4 +1,4 @@
-;;; comp-ide.el --- A very basic implementation of a competitive ide -*- lexical-binding: t; -*-
+;;; comp-ide.el --- A simple competitive programming IDE -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020-2021 Sidharth Arya
 

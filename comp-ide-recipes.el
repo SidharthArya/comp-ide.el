@@ -29,16 +29,23 @@
 
 ;; Default Recipes for comp ide
 ;;; Code:
-;;; ide-mode-recipes.el ---
-;;; Code:
+
+
+(defgroup comp-ide nil
+  "comp-ide.el attempts to be a simple and efficient competitive coding IDE"
+  :group 'convenience
+  :prefix "comp-ide-"
+  :link '(url-link "https://github.com/SidharthArya/comp-ide.el"))
 
 (defcustom comp-ide-comp-ide-compile-recipes nil
   "Compile Recipes for comp ide."
-  :type 'list)
+  :type 'list
+  :group 'comp-ide)
 
 (defcustom comp-ide-comp-ide-execute-recipes nil
   "Execute Recipes for comp ide."
-  :type 'list)
+  :type 'list
+  :group 'comp-ide)
 
 (setq comp-ide-comp-ide-compile-recipes '(("c" "gcc %bf -o %bo")
                                      ("cpp" "g++ %bf -o %bo")
