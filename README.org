@@ -15,7 +15,7 @@ All the Input is internally linked to be passed into the executing program. And 
     :custom
     (comp-ide-auto-execute-on-compile t)
     :config
-    (require 'ide-mode-recipes)
+    (require 'comp-ide-recipes)
     (evil-define-key 'normal 'prog-mode-map (kbd "\\i") comp-ide-command-map) 
     (evil-define-key 'normal 'comp-ide-slave-mode-map (kbd "\\i") comp-ide-command-map)
     (evil-define-key 'normal 'prog-mode-map (kbd "\\ti") 'comp-ide)
