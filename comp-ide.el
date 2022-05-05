@@ -148,18 +148,18 @@ REPL - Replacing string"
 (defun comp-ide-comp-ide-compile()
   "Compile the code."
   (interactive)
-  (setq comp-ide-extension (nth 1 (split-string (buffer-name) "\\.")))
-  (setq comp-ide-file-name (nth 0 (split-string (buffer-name) "\\.")))
-  
+  (setq comp-ide-src (file-name-nondirectory (buffer-file-name)))
+  (setq comp-ide-extension (file-name-extension comp-ide-src))
+  (setq comp-ide-file-name (file-name-sans-extension (file-name-nondirectory (buffer-file-name))))
   (setq comp-ide-command
         (comp-ide-find-from-dict comp-ide-comp-ide-compile-recipes comp-ide-extension))
   (setq comp-ide-command
         (string-join (split-string (string-join
-                                    (split-string comp-ide-command "%bf") (buffer-name)) "%bo")
+                                    (split-string comp-ide-command "%bf") comp-ide-src) "%bo")
                      comp-ide-file-name))
 
   (save-excursion
-  (compile comp-ide-command)))
+    (compile comp-ide-command)))
 
 (defun comp-ide-comp-ide-execute()
   "Execute the code."
